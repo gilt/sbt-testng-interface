@@ -7,7 +7,7 @@ object TestNGPluginBuild extends Build {
     base = file("."),
     settings = Project.defaultSettings ++ commonSettings ++ Seq(
       version := "3.0.2",
-      crossScalaVersions := Seq("2.9.3", "2.10.4", "2.11.1"),
+      crossScalaVersions := Seq("2.9.1", "2.9.2", "2.9.3", "2.10.4", "2.11.2"),
       libraryDependencies ++= Seq(
         "org.scala-sbt" % "test-interface" % "1.0" % "provided",
         "org.testng" % "testng" % "6.8.8" % "provided",
@@ -22,13 +22,14 @@ object TestNGPluginBuild extends Build {
       crossScalaVersions := Seq("2.10.4"),
       scalacOptions += "-language:_"))
 
-  lazy val commonSettings: Seq[Setting[_]] = publishSettings ++ Seq(
-    organization := "de.johoop",
+  lazy val commonSettings: Seq[Setting[_]] = gilt.GiltProject.jarSettings ++ Seq(
+    organization := "com.gilt",
     scalaVersion := "2.10.4",
-    scalacOptions ++= Seq("-unchecked", "-deprecation"))
+    scalacOptions ++= Seq("-unchecked", "-deprecation")) ++ 
+    publishSettings
 
   lazy val publishSettings: Seq[Setting[_]] = Seq(
-    publishTo := Some(Resolver.sbtPluginRepo(if (isSnapshot.value) "snapshots" else "releases")),
-    publishMavenStyle := false,
+    publishTo := Some("thirdparty-pom" at "https://nexus.gilt.com/nexus/content/repositories/thirdparty/"),
+    publishMavenStyle := true,
     publishArtifact in Test := false)
 }
