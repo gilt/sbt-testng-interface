@@ -30,24 +30,24 @@ import sbt.Keys._
 
 object TestNGPlugin extends Plugin with Keys {
   def testNGSettings: Seq[Setting[_]] = Seq(
-	resolvers += Resolver.url("scala-sbt simple releases", 
-		url("http://repo.scala-sbt.org/scalasbt/simple/sbt-plugin-releases"))(Resolver.ivyStylePatterns), // why is that necessary, and why like that?
+	resolvers += Resolver.sbtPluginRepo("releases"), // why is that necessary, and why like that?
 
-    testNGVersion := "6.8.8",
+    testNGVersion := "6.9.13.6",
     testNGOutputDirectory := (crossTarget.value / "testng").absolutePath,
     testNGParameters := Seq(),
     testNGSuites := Seq(((resourceDirectory in Test).value / "testng.yaml").absolutePath),
 
     libraryDependencies ++= Seq(
       "org.testng" % "testng" % testNGVersion.value % "test->default",
-      "org.yaml" % "snakeyaml" % "1.12" % "test",
-      "de.johoop" %% "sbt-testng-interface" % "3.0.2" % "test"),
+      "org.yaml" % "snakeyaml" % "1.17" % "test",
+      "de.johoop" %% "sbt-testng-interface" % "3.0.3" % "test"),
     
     testFrameworks += TestNGFrameworkID,
 
-    testOptions += 
-      Tests.Argument(TestNGFrameworkID, 
-        (("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value):_*))
+    testOptions += Tests.Argument(
+      TestNGFrameworkID, ("-d" +: testNGOutputDirectory.value +: testNGParameters.value) ++ testNGSuites.value :_*
+    )
+  )
     
   object TestNGFrameworkID extends TestFramework("de.johoop.testnginterface.TestNGFramework") {
     override def toString = "TestNG"
